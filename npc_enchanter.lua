@@ -1,6 +1,7 @@
 -- Made by Foereaper
 -- Fixed by rochet
 -- edit by Clotic Updated with Ranged bows and added some other enchants
+-- fix by kebabstorm
 
 local npcid = 601015 -- ID for npc
 
@@ -154,11 +155,11 @@ local T = {
 
     },
     [17] = {
-		-- Ranged
-        {"Diamond-cut Refractor Scope\n(+15 Damage)", 3843, false},
-        {"Sun Scope\n(+40 Ranged Haste)", 3607, false},
-        {"Heartseeker Scope\n(+40 Ranged Crit)", 3608, false},
-        -- {"Khorium Scope", 2723, false}
+        -- Ranged
+        {"Diamond-cut Refractor Scope\n(+15 Damage)", 3843, true},
+        {"Sun Scope\n(+40 Ranged Haste)", 3607, true},
+        {"Heartseeker Scope\n(+40 Ranged Crit)", 3608, true},
+        -- {"Khorium Scope", 2723, true},
 
     }
 }
@@ -167,9 +168,9 @@ require("GossipTextExtension")
 
 local RT = {}
 do
-	for _, v in ipairs(T["Menu"]) do
-		RT[v[2]] = v[1]
-	end
+    for _, v in ipairs(T["Menu"]) do
+        RT[v[2]] = v[1]
+    end
 end
 
 local pVar = {}
@@ -187,11 +188,13 @@ end
 
 function EnchanterSelect(event, player, unit, sender, intid, code)
     if (intid < 500) then
-    	player:GossipSetText("Select a "..(RT[intid] or "").." enchant")
+        player:GossipSetText("Select a "..(RT[intid] or "").." enchant")
         local ID = intid
         local f
         if (intid == 161 or intid == 151) then
             ID = math.floor(intid / 10)
+            f = true
+        elseif (intid == 17) then
             f = true
         end
         pVar[player:GetName()] = intid
@@ -223,6 +226,7 @@ function EnchanterSelect(event, player, unit, sender, intid, code)
                                 item:SetEnchantment(intid, 0, 0)
                                 unit:CastSpell(player, 12512)
                                 player:CastSpell(player, 36937)
+                                player:SendBroadcastMessage("Your "..item:GetName().." was enchanted with "..v[1]:gsub("[\n]", " "))
                             else
                                 player:SendAreaTriggerMessage("You do not have a Two-Handed Weapon equipped!")
                             end
@@ -232,6 +236,7 @@ function EnchanterSelect(event, player, unit, sender, intid, code)
                                 item:SetEnchantment(intid, 0, 0)
                                 unit:CastSpell(player, 12512)
                                 player:CastSpell(player, 36937)
+                                player:SendBroadcastMessage("Your "..item:GetName().." was enchanted with "..v[1]:gsub("[\n]", " "))
                             else
                                 player:SendAreaTriggerMessage("You do not have a Shield equipped!")
                             end
@@ -240,7 +245,8 @@ function EnchanterSelect(event, player, unit, sender, intid, code)
                                 item:ClearEnchantment(0, 0)
                                 item:SetEnchantment(intid, 0, 0)
                                 unit:CastSpell(player, 12512)
-                        		player:CastSpell(player, 36937)
+                                player:CastSpell(player, 36937)
+                                player:SendBroadcastMessage("Your "..item:GetName().." was enchanted with "..v[1]:gsub("[\n]", " "))
                             else
                                 player:SendAreaTriggerMessage("You do not have a Ranged equipped!")
                             end
@@ -250,6 +256,7 @@ function EnchanterSelect(event, player, unit, sender, intid, code)
                         item:SetEnchantment(intid, 0, 0)
                         unit:CastSpell(player, 12512)
                         player:CastSpell(player, 36937)
+                        player:SendBroadcastMessage("Your "..item:GetName().." was enchanted with "..v[1]:gsub("[\n]", " "))
                     end
                 else
                     player:SendAreaTriggerMessage("You have no item to enchant in the selected slot!")
